@@ -46,19 +46,24 @@ func main() {
 }
 
 func execute(ctx context.Context, out io.Writer, args []string) error {
+	// We support only one flag --no-header and it must be the
+	// first arg if it is provided at all.
+	var noHeader bool
+	if len(args) < 2 {
+		return errors.New("invalid args")
+	}
+	if args[0] == "--no-header" {
+		noHeader = true
+		// We're done with the no-header flag, slice args to
+		// get rid of the flag, and carry on.
+		args = args[1:]
+	}
+
 	// args[0] is sqlite db file path
 	// args[1] is the SQL query
 	// any additional args are arguments to the SQL query
 	if len(args) < 2 {
 		return errors.New("invalid args")
-	}
-
-	// We support only one flag --no-header and it must be the
-	// first arg.
-	var noHeader bool
-	if args[0] == "--no-header" {
-		noHeader = true
-		args = args[1:]
 	}
 
 	// Create a []interface{} containing any query args
@@ -147,12 +152,12 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Rows Affected: %d\n", affected)
+	fmt.Fprintf(out, "Rows Affected: %d\n", affected)
 
 	lastInserted, err := res.LastInsertId()
 	if err == nil && lastInserted > 0 {
 		// We don't care about reporting the err from LastInsertId
-		fmt.Printf("Last Insert ID: %d\n", lastInserted)
+		fmt.Fprintf(out, "Last Insert ID: %d\n", lastInserted)
 	}
 
 	return nil

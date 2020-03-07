@@ -13,17 +13,14 @@ import (
 
 func Test_execute(t *testing.T) {
 	const rowCount = 10
-
 	dbFile := filepath.Join("testdata", "example.sqlite")
 
-	records := mustQuery(t, dbFile, false, "SELECT * FROM actor")
+	records := mustQuery(t, dbFile, true, "SELECT * FROM actor")
+	require.Equal(t, rowCount, len(records))
+	records = mustQuery(t, dbFile, false, "SELECT * FROM actor")
 	require.Equal(t, rowCount+1, len(records)) // +1 is for header row
 
-	records = mustQuery(t, dbFile, true, "SELECT * FROM actor")
-	require.Equal(t, rowCount, len(records))
-
-	ctx := context.Background()
-	buf := &bytes.Buffer{}
+	ctx, buf := context.Background(), &bytes.Buffer{}
 
 	err := execute(ctx, buf, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
 	require.NoError(t, err)
@@ -32,6 +29,7 @@ func Test_execute(t *testing.T) {
 
 	records = mustQuery(t, dbFile, true, "SELECT * FROM actor")
 	assert.Equal(t, rowCount+1, len(records)) // should be an extra row now
+	// ^ we assert here because we want the DELETE to occur regardless.
 
 	err = execute(ctx, buf, []string{dbFile, "DELETE FROM actor WHERE first_name = ?", "Kubla"})
 	require.NoError(t, err)
@@ -42,6 +40,8 @@ func Test_execute(t *testing.T) {
 	require.Equal(t, rowCount, len(records))
 }
 
+// mustQuery is a testing convenience method that executes query and
+// returns the resulting records, failing the test on any error.
 func mustQuery(t *testing.T, dbFile string, noHeader bool, query string) [][]string {
 	ctx := context.Background()
 	buf := &bytes.Buffer{}
