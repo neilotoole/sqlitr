@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -13,7 +15,17 @@ import (
 
 func Test_execute(t *testing.T) {
 	const rowCount = 10
-	dbFile := filepath.Join("testdata", "example.sqlite")
+
+	// make a copy of the db file so that git doesn't get annoyed by
+	// this test touching the file
+	dbData, err := ioutil.ReadFile(filepath.Join("testdata", "example.sqlite"))
+	require.NoError(t, err)
+	f, err := ioutil.TempFile("", "*_sqlitr.example.sqlite")
+	require.NoError(t, err)
+	dbFile := f.Name()
+	t.Logf("Using copy of example.sqlite: %s", dbFile)
+	require.NoError(t, ioutil.WriteFile(dbFile, dbData, os.ModePerm))
+	defer func() { assert.NoError(t, os.Remove(dbFile)) }()
 
 	records := mustQuery(t, dbFile, true, "SELECT * FROM actor")
 	require.Equal(t, rowCount, len(records))
@@ -22,7 +34,7 @@ func Test_execute(t *testing.T) {
 
 	ctx, buf := context.Background(), &bytes.Buffer{}
 
-	err := execute(ctx, buf, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
+	err = execute(ctx, buf, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
 	require.NoError(t, err)
 	assert.Contains(t, buf.String(), "Rows Affected: 1")
 	buf.Reset()

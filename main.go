@@ -33,7 +33,7 @@ func main() {
 	if len(os.Args) == 2 {
 		switch os.Args[1] {
 		case "help", "-h", "-help", "--help":
-			fmt.Printf(msgHelp)
+			fmt.Print(msgHelp)
 			return
 		}
 	}
@@ -135,7 +135,10 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 				headerWritten = true
 			}
 
-			w.Write(record)
+			err = w.Write(record)
+			if err != nil {
+				return err
+			}
 			w.Flush()
 		}
 
