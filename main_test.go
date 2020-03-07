@@ -23,7 +23,9 @@ func Test_execute(t *testing.T) {
 	f, err := ioutil.TempFile("", "*_sqlitr.example.sqlite")
 	require.NoError(t, err)
 	dbFile := f.Name()
-	require.NoError(t, ioutil.WriteFile(dbFile, dbData, os.ModePerm))
+	_, err = f.Write(dbData)
+	require.NoError(t, err)
+	require.NoError(t, f.Close())
 	defer func() { assert.NoError(t, os.Remove(dbFile)) }()
 
 	records := mustQuery(t, dbFile, true, "SELECT * FROM actor")
