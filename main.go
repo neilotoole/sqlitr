@@ -53,6 +53,14 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 		return errors.New("invalid args")
 	}
 
+	// We support only one flag --no-header and it must be the
+	// first arg.
+	var noHeader bool
+	if args[0] == "--no-header" {
+		noHeader = true
+		args = args[1:]
+	}
+
 	// Create a []interface{} containing any query args
 	var queryArgs []interface{}
 	// If there's additional args, we append them to queryArgs
@@ -114,7 +122,7 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 				}
 			}
 
-			if !headerWritten {
+			if !noHeader && !headerWritten {
 				err := w.Write(colNames)
 				if err != nil {
 					return err
@@ -150,18 +158,17 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 	return nil
 }
 
-const (
-	msgUsage = `Usage: sqlitr path/to.db query [args]
+const msgHelp = `sqlitr is a trivial query tool for SQLite.
+
+Usage: sqlitr path/to/db.sqlite query [args]
 
 Examples:
   sqlitr --help
-  sqlitr ./example.sqlite 'SELECT * FROM actor'
-  sqlitr ./example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
-  sqlitr ./example.sqlite 'DELETE FROM actor WHERE first_name = ?' Genghis
-`
-	msgHelp = `sqlitr is a trivial query tool for SQLite.
+  sqlitr ./testdata/example.sqlite 'SELECT * FROM actor'
+  sqlitr --no-header ./testdata/example.sqlite 'SELECT * FROM actor'
+  sqlitr ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
+  sqlitr ./testdata/example.sqlite 'DELETE FROM actor WHERE first_name = ?' Kubla
 
-` + msgUsage + `
 Note that if the query starts with SELECT, output is in TSV (tab-separated)
 format. If it's some other SQL statement, the count of rows affected (and
 the last insert ID if applicable) are printed.
@@ -172,4 +179,3 @@ by Neil O'Toole <neilotoole@apache.org> and is released under
 the MIT License. It is entirely unsupported and will not be developed
 further. See https://github.com/neilotoole/sqlitr for more.
 `
-)
