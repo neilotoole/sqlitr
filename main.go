@@ -8,6 +8,7 @@ import (
 	"database/sql/driver"
 	"encoding/csv"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -31,6 +32,7 @@ func main() {
 	}()
 
 	if len(os.Args) == 2 {
+		// Little hack to handle common cases of users looking for help
 		switch os.Args[1] {
 		case "help", "-h", "-help", "--help":
 			fmt.Print(msgHelp)
@@ -38,30 +40,21 @@ func main() {
 		}
 	}
 
-	err := execute(ctx, os.Stdout, os.Args[1:])
+	var flagNoHeader bool
+	flag.BoolVar(&flagNoHeader, "no-header", false, "don't print results header row")
+	flag.Parse()
+
+	err := execute(ctx, os.Stdout, flagNoHeader, flag.Args())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func execute(ctx context.Context, out io.Writer, args []string) error {
-	// We support only one flag --no-header and it must be the
-	// first arg if it is provided at all.
-	var noHeader bool
-	if len(args) < 2 {
-		return errors.New("invalid args")
-	}
-	if args[0] == "--no-header" {
-		noHeader = true
-		// We're done with the no-header flag, slice args to
-		// get rid of the flag, and carry on.
-		args = args[1:]
-	}
-
+func execute(ctx context.Context, out io.Writer, noHeader bool, args []string) error {
 	// args[0] is sqlite db file path
 	// args[1] is the SQL query
-	// any additional args are arguments to the SQL query
+	// Any additional args are arguments to the SQL query
 	if len(args) < 2 {
 		return errors.New("invalid args")
 	}
@@ -82,6 +75,8 @@ func execute(ctx context.Context, out io.Writer, args []string) error {
 
 	query := strings.TrimSpace(args[1])
 	// If it's a SELECT, we use db.QueryContext; otherwise db.ExecContext
+	// Obviously this messes up legitimate queries that don't start
+	// with SELECT, but sqlitr is only a demo.
 	if strings.HasPrefix(strings.ToUpper(query), "SELECT") {
 		// It's SELECT
 		rows, err := db.QueryContext(ctx, query, queryArgs...)

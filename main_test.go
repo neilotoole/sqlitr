@@ -23,7 +23,6 @@ func Test_execute(t *testing.T) {
 	f, err := ioutil.TempFile("", "*_sqlitr.example.sqlite")
 	require.NoError(t, err)
 	dbFile := f.Name()
-	t.Logf("Using copy of example.sqlite: %s", dbFile)
 	require.NoError(t, ioutil.WriteFile(dbFile, dbData, os.ModePerm))
 	defer func() { assert.NoError(t, os.Remove(dbFile)) }()
 
@@ -33,8 +32,7 @@ func Test_execute(t *testing.T) {
 	require.Equal(t, rowCount+1, len(records)) // +1 is for header row
 
 	ctx, buf := context.Background(), &bytes.Buffer{}
-
-	err = execute(ctx, buf, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
+	err = execute(ctx, buf, false, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
 	require.NoError(t, err)
 	assert.Contains(t, buf.String(), "Rows Affected: 1")
 	buf.Reset()
@@ -43,7 +41,7 @@ func Test_execute(t *testing.T) {
 	assert.Equal(t, rowCount+1, len(records)) // should be an extra row now
 	// ^ we assert here because we want the DELETE to occur regardless.
 
-	err = execute(ctx, buf, []string{dbFile, "DELETE FROM actor WHERE first_name = ?", "Kubla"})
+	err = execute(ctx, buf, false, []string{dbFile, "DELETE FROM actor WHERE first_name = ?", "Kubla"})
 	require.NoError(t, err)
 	require.Contains(t, buf.String(), "Rows Affected: 1")
 	buf.Reset()
@@ -59,13 +57,9 @@ func mustQuery(t *testing.T, dbFile string, noHeader bool, query string) [][]str
 	buf := &bytes.Buffer{}
 	csvReader := csv.NewReader(buf)
 	csvReader.Comma = '\t'
-
 	args := []string{dbFile, query}
-	if noHeader {
-		args = append([]string{"--no-header"}, args...)
-	}
 
-	err := execute(ctx, buf, args)
+	err := execute(ctx, buf, noHeader, args)
 	require.NoError(t, err)
 
 	records, err := csvReader.ReadAll()
