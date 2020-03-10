@@ -11,26 +11,43 @@ the use of `neilotoole/xcgo` to make life a bit easier.
 From `sqlitr --help`:
 
 ```
-sqlitr is a trivial query tool for SQLite.
+sqlitr is a trivial demonstration query tool for SQLite.
 
-Usage: sqlitr path/to/db.sqlite query [args]
+Usage: sqlitr [FLAGS] path/to/db.sqlite query [QUERY_ARGS]
 
 Examples:
   sqlitr --help
+  sqlitr --version
+
+  # simple select, will print header row
   sqlitr ./testdata/example.sqlite 'SELECT * FROM actor'
+
+  # same as above, but don't print header row
   sqlitr --no-header ./testdata/example.sqlite 'SELECT * FROM actor'
-  sqlitr ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
-  sqlitr ./testdata/example.sqlite 'DELETE FROM actor WHERE first_name = ?' Kubla
 
-Note that if the query starts with SELECT, output is in TSV (tab-separated)
-format. If it's some other SQL statement, the count of rows affected (and
-the last insert ID if applicable) are printed.
+  # execute INSERT stmt
+  sqlitr --exec ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
 
-sqlitr exists solely as a demonstration for neilotoole/xcgo which
-is a Go cross-compiling docker builder image. sqlitr was created
-by Neil O'Toole <neilotoole@apache.org> and is released under
-the MIT License. It is entirely unsupported and will not be developed
-further. See https://github.com/neilotoole/sqlitr for more.
+  # same as above, but supplying query args via the command line
+  sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE first_name = ?' Kubla
+
+  # create a new DB file
+  sqlitr --create path/to/db.sqlite
+
+
+Note that if the SQL is a SELECT or other query, output is
+in TSV (tab-separated) format. To execute some other SQL statement
+such as INSERT, supply the --exec flag. The count of rows affected
+(and the last insert ID if applicable) are printed when --exec is
+used.
+
+sqlitr exists as a demonstration project for neilotoole/xcgo which
+is a Go cross-compiling docker builder image: sqlitr makes use of
+the https://github.com/mattn/sqlite3 package which uses CGo to
+incorporate SQLite.
+
+sqlitr was created by Neil O'Toole <neilotoole@apache.org> and is
+released under the MIT License. See https://github.com/neilotoole/sqlitr
 ```
 
 Running `sqlitr ./testdata/example.sqlite 'SELECT * FROM actor'`:
