@@ -19,6 +19,12 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
 	ctx, cancelFn := context.WithCancel(context.Background())
 	defer cancelFn()
@@ -31,27 +37,38 @@ func main() {
 		cancelFn()
 	}()
 
-	if len(os.Args) == 2 {
-		// Little hack to handle common cases of users looking for help
-		switch os.Args[1] {
-		case "help", "-h", "-help", "--help":
-			fmt.Print(msgHelp)
-			return
-		}
-	}
-
-	var flagNoHeader bool
+	var flagNoHeader, flagExec, flagVersion, flagHelp bool
 	flag.BoolVar(&flagNoHeader, "no-header", false, "don't print results header row")
+	flag.BoolVar(&flagExec, "exec", false, "execute input as statement rather than query")
+	flag.BoolVar(&flagVersion, "version", false, "print version info")
+	flag.BoolVar(&flagHelp, "help", false, "print help")
 	flag.Parse()
 
-	err := execute(ctx, os.Stdout, flagNoHeader, flag.Args())
+	if flagHelp {
+		fmt.Print(msgHelp)
+		return
+	}
+
+	if flagVersion {
+		if version == "dev" {
+			fmt.Println("sqlitr dev-build")
+			return
+		}
+		fmt.Printf("sqlitr %s  %s  %s\n", version, date, commit)
+		return
+	}
+
+	err := execute(ctx, os.Stdout, false, flagNoHeader, flag.Args())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func execute(ctx context.Context, out io.Writer, noHeader bool, args []string) error {
+// execute executes the query (possibly with query args) in args.
+// If execMode is true, we use db.ExecContext, otherwise we use
+// db.QueryContext.
+func execute(ctx context.Context, out io.Writer, execMode bool, noHeader bool, args []string) error {
 	// args[0] is sqlite db file path
 	// args[1] is the SQL query
 	// Any additional args are arguments to the SQL query

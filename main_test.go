@@ -34,7 +34,7 @@ func Test_execute(t *testing.T) {
 	require.Equal(t, rowCount+1, len(records)) // +1 is for header row
 
 	ctx, buf := context.Background(), &bytes.Buffer{}
-	err = execute(ctx, buf, false, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
+	err = execute(ctx, buf, false, false, []string{dbFile, "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"})
 	require.NoError(t, err)
 	assert.Contains(t, buf.String(), "Rows Affected: 1")
 	buf.Reset()
@@ -43,7 +43,7 @@ func Test_execute(t *testing.T) {
 	assert.Equal(t, rowCount+1, len(records)) // should be an extra row now
 	// ^ we assert here because we want the DELETE to occur regardless.
 
-	err = execute(ctx, buf, false, []string{dbFile, "DELETE FROM actor WHERE first_name = ?", "Kubla"})
+	err = execute(ctx, buf, false, false, []string{dbFile, "DELETE FROM actor WHERE first_name = ?", "Kubla"})
 	require.NoError(t, err)
 	require.Contains(t, buf.String(), "Rows Affected: 1")
 	buf.Reset()
@@ -61,7 +61,7 @@ func mustQuery(t *testing.T, dbFile string, noHeader bool, query string) [][]str
 	csvReader.Comma = '\t'
 	args := []string{dbFile, query}
 
-	err := execute(ctx, buf, noHeader, args)
+	err := execute(ctx, buf, false, noHeader, args)
 	require.NoError(t, err)
 
 	records, err := csvReader.ReadAll()
