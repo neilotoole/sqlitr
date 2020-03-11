@@ -364,24 +364,27 @@ Examples:
   # same as above, but don't print header row
   sqlitr --no-header ./testdata/example.sqlite 'SELECT * FROM actor'
 
-  # execute INSERT stmt
+  # same query, but the SQLite db is first downloaded from
+  # the URL to a temp file, then the query is executed. 
+  sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+
+  # execute a SQL stmt (note the --exec flag, as opposed to default query behavior)
   sqlitr --exec ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
   
-  # same as above, but supplying query args via the command line
-  sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE first_name = ?' Kubla
+  # execute a SQL stmt, but supply query args via the command line
+  sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE actor_id = ?' 3
   
   # create a new DB file
   sqlitr --create path/to/db.sqlite
 
 
-Note that if the SQL is a SELECT or other query, output is
-in TSV (tab-separated) format. To execute some other SQL statement
-such as INSERT, supply the --exec flag. The count of rows affected
-(and the last insert ID if applicable) are printed when --exec is
-used.
+Note that if the SQL is a SELECT or similar query, output is
+in TSV (tab-separated) format. To execute a non-query SQL statement
+such as INSERT, supply the --exec flag: in that case the count of
+rows affected (and the last insert ID if applicable) are printed.
 
 sqlitr exists as a demonstration project for neilotoole/xcgo which
-is a Go cross-compiling docker builder image: sqlitr makes use of
+is a Go/CGo cross-compiling docker builder image. sqlitr makes use of
 the https://github.com/mattn/sqlite3 package which uses CGo to
 incorporate SQLite.
 
