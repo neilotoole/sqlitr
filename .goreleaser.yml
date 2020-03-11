@@ -9,7 +9,7 @@ before:
   hooks:
     - go mod download
 builds:
-  - id: macos_build
+  - id: build_macos
     env:
       - CC=o64-clang
       - CXX=o64-clang++
@@ -19,7 +19,7 @@ builds:
     goarch:
       - amd64
 
-  - id: linux_build
+  - id: build_linux
     env:
     main: ./main.go
     goos:
@@ -27,7 +27,7 @@ builds:
     goarch:
       - amd64
 
-  - id: windows_build
+  - id: build_windows
     env:
       - CC=x86_64-w64-mingw32-gcc
       - CXX=x86_64-w64-mingw32-g++
@@ -36,8 +36,6 @@ builds:
       - windows
     goarch:
       - amd64
-      - 386
-
 
 archives:
 - replacements:
