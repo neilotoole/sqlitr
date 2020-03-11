@@ -44,8 +44,13 @@ checksum:
 snapshot:
   name_template: "{{ .Tag }}-snapshot"
 changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^docs:'
-    - '^test:'
+  skip: true
+
+
+release:
+  github:
+    owner: neilotoole
+    name: sqlitr
+  draft: false
+  prerelease: auto
+
