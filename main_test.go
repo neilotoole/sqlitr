@@ -135,7 +135,7 @@ func Test_cli_version(t *testing.T) {
 }
 
 func Test_download(t *testing.T) {
-	const wantURL = "https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite"
+	const wantURL = "https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite"
 
 	ctx := context.Background()
 	destDir, err := ioutil.TempDir("", t.Name())

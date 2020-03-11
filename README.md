@@ -1,10 +1,10 @@
 # sqlitr
-`sqlitr` is a trivial query tool for SQLite. It exists solely as a
+`sqlitr` is a trivial query tool for SQLite. It was created as a
 demonstration for [neilotoole/xcgo](https://github.com/neilotoole/xcgo),
 which is a Go cross-compiling docker builder image. `sqlitr` invokes
-the SQLite C library via CGo. Building and distributing binaries for
-multiple platforms when using CGo is a challenge. This project demonstrates
-the use of `neilotoole/xcgo` to make life a bit easier.
+the SQLite C library via CGo... building and distributing binaries for
+multiple platforms with CGo is a challenge. The `neilotoole/xcgo`
+image makes life easier for the common cases.
 
 ## Usage
 
@@ -25,24 +25,27 @@ Examples:
   # same as above, but don't print header row
   sqlitr --no-header ./testdata/example.sqlite 'SELECT * FROM actor'
 
-  # execute INSERT stmt
+  # same query, but the SQLite db is first downloaded from
+  # the URL to a temp file, then the query is executed.
+  sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+
+  # execute a SQL stmt (note the --exec flag, as opposed to default query behavior)
   sqlitr --exec ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
 
-  # same as above, but supplying query args via the command line
-  sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE first_name = ?' Kubla
+  # execute a SQL stmt, but supply query args via the command line
+  sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE actor_id = ?' 3
 
   # create a new DB file
   sqlitr --create path/to/db.sqlite
 
 
-Note that if the SQL is a SELECT or other query, output is
-in TSV (tab-separated) format. To execute some other SQL statement
-such as INSERT, supply the --exec flag. The count of rows affected
-(and the last insert ID if applicable) are printed when --exec is
-used.
+Note that if the SQL is a SELECT or similar query, output is
+in TSV (tab-separated) format. To execute a non-query SQL statement
+such as INSERT, supply the --exec flag: in that case the count of
+rows affected (and the last insert ID if applicable) are printed.
 
 sqlitr exists as a demonstration project for neilotoole/xcgo which
-is a Go cross-compiling docker builder image: sqlitr makes use of
+is a Go/CGo cross-compiling docker builder image. sqlitr makes use of
 the https://github.com/mattn/sqlite3 package which uses CGo to
 incorporate SQLite.
 
@@ -50,10 +53,15 @@ sqlitr was created by Neil O'Toole <neilotoole@apache.org> and is
 released under the MIT License. See https://github.com/neilotoole/sqlitr
 ```
 
-Running `sqlitr ./testdata/example.sqlite 'SELECT * FROM actor'`:
+Usage example, with a remote DB file:
+
+```shell script
+$ sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+```
+
+produces TSV (tab-separated) output:
 
 ```tsv
-sqlitr ./testdata/example.sqlite 'SELECT * FROM actor'
 actor_id	first_name	last_name
 1	PENELOPE	GUINESS
 2	NICK	WAHLBERG
@@ -67,12 +75,59 @@ actor_id	first_name	last_name
 10	CHRISTIAN	GABLE
 ```
 
-Note that the output is in TSV (tab-separated) format.
 
 ## Installation
-This section is the raison d'être of `sqlitr`.
+This section is the raison d'être of `sqlitr`. After any of these
+methods, run `sqlitr --version` to verify your install.
 
-The usual Go method will work: `go get -u github.com/neilotoole/sqlitr`
+### go get
+The usual Go method will work: 
+
+```shell script
+go get -u github.com/neilotoole/sqlitr
+```
+
+### go install
+
+```shell script
+$ git clone https://github.com/neilotoole/sqlitr.git
+$ cd sqlitr
+$ go install
+```
+
+### brew
+Install on macos via [brew](https://brew.sh/)
+
+```shell script
+TODO
+
+```
+
+### scoop
+Install on Windows via [scoop](https://brew.sh/)
+
+```shell script
+TODO
+```
+
+### snap
+Install on Linux via [snap](https://snapcraft.io/docs/getting-started)
+
+```shell script
+TODO
+```
+
+### Docker
+Run directly from the published docker image:
+
+```shell script
+docker run neilotoole/sqlitr:latest /example.sqlite 'SELECT * FROM actor'
+```
+
+### RPM
+
+### GitHub Release
+Download the appropriate file from GitHub [releases], and extract the binary from the archive.
 
 
 ## Acknowledgements

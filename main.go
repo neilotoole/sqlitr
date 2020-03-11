@@ -51,7 +51,7 @@ func main() {
 
 	err := cli(ctx, os.Stdout, os.Args)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, "sqlitr: error: "+err.Error())
 		os.Exit(1)
 	}
 }
@@ -366,7 +366,7 @@ Examples:
 
   # same query, but the SQLite db is first downloaded from
   # the URL to a temp file, then the query is executed. 
-  sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+  sqlitr https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite 'SELECT * FROM actor'
 
   # execute a SQL stmt (note the --exec flag, as opposed to default query behavior)
   sqlitr --exec ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
