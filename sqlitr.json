@@ -1,0 +1,14 @@
+{
+    "version": "0.1.4",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/neilotoole/sqlitr/releases/download/v0.1.4/sqlitr_0.1.4_windows_amd64.tar.gz",
+            "bin": [
+                "sqlitr.exe"
+            ],
+            "hash": "22c9afb481e4eb990271d136c3215b51caf327d24f76e98da84b757f9ca31d4d"
+        }
+    },
+    "homepage": "https://github.com/neilotoole/sqlitr",
+    "description": "sqlitr is a trivial Go/CGo SQLite CLI"
+}
