@@ -53,7 +53,7 @@ sqlitr was created by Neil O'Toole <neilotoole@apache.org> and is
 released under the MIT License. See https://github.com/neilotoole/sqlitr
 ```
 
-Usage example, using a remote DB file:
+Usage example, with a remote DB file:
 
 ```shell script
 $ sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
@@ -77,9 +77,58 @@ actor_id	first_name	last_name
 
 
 ## Installation
-This section is the raison d'être of `sqlitr`. This project 
+This section is the raison d'être of `sqlitr`. After any of these
+methods, run `sqlitr --version` to verify your install.
 
-The usual Go method will work: `go get -u github.com/neilotoole/sqlitr`
+### go get
+The usual Go method will work: 
+
+```shell script
+go get -u github.com/neilotoole/sqlitr
+```
+
+### go install
+
+```shell script
+$ git clone https://github.com/neilotoole/sqlitr.git
+$ cd sqlitr
+$ go install
+```
+
+### brew
+Install on macos via [brew](https://brew.sh/)
+
+```shell script
+TODO
+
+```
+
+### scoop
+Install on Windows via [scoop](https://brew.sh/)
+
+```shell script
+TODO
+```
+
+### snap
+Install on Linux via [snap](https://snapcraft.io/docs/getting-started)
+
+```shell script
+TODO
+```
+
+### Docker
+Run directly from the published docker image:
+
+```shell script
+docker run neilotoole/sqlitr:latest https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+```
+
+### RPM
+
+### GitHub Release
+
+Download the appropriate file from GitHub [releases], and extract the binary from the archive.
 
 
 ## Acknowledgements
