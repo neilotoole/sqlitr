@@ -26,15 +26,15 @@ Examples:
   sqlitr --no-header ./testdata/example.sqlite 'SELECT * FROM actor'
 
   # same query, but the SQLite db is first downloaded from
-  # the URL to a temp file, then the query is executed.
-  sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+  # the URL to a temp file, then the query is executed. 
+  sqlitr https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite 'SELECT * FROM actor'
 
   # execute a SQL stmt (note the --exec flag, as opposed to default query behavior)
   sqlitr --exec ./testdata/example.sqlite "INSERT INTO actor (actor_id, first_name, last_name) VALUES(11, 'Kubla', 'Khan')"
-
+  
   # execute a SQL stmt, but supply query args via the command line
   sqlitr --exec ./testdata/example.sqlite 'DELETE FROM actor WHERE actor_id = ?' 3
-
+  
   # create a new DB file
   sqlitr --create path/to/db.sqlite
 
@@ -56,12 +56,7 @@ released under the MIT License. See https://github.com/neilotoole/sqlitr
 Usage example, with a remote DB file:
 
 ```shell script
-$ sqlitr https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
-```
-
-produces TSV (tab-separated) output:
-
-```tsv
+$ sqlitr https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite 'SELECT * FROM actor'
 actor_id	first_name	last_name
 1	PENELOPE	GUINESS
 2	NICK	WAHLBERG
