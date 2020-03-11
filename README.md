@@ -91,11 +91,10 @@ $ go install
 ```
 
 ### brew
-Install on macos via [brew](https://brew.sh/)
+Install on macOS via [brew](https://brew.sh/)
 
 ```shell script
-TODO
-
+$ brew tap neilotoole/sqlitr && brew install sqlitr
 ```
 
 ### scoop
