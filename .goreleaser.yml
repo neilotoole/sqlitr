@@ -1,0 +1,51 @@
+# goreleaser.yaml file builds the project for macOS, Linux, and Windows
+# on amd64.
+#
+# See http://goreleaser.com
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=1
+before:
+  hooks:
+    - go mod download
+builds:
+  - id: build_macos
+    env:
+      - CC=o64-clang
+      - CXX=o64-clang++
+    main: ./main.go
+    goos:
+      - darwin
+    goarch:
+      - amd64
+
+  - id: build_linux
+    env:
+    main: ./main.go
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: build_windows
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    main: ./main.go
+    goos:
+      - windows
+    goarch:
+      - amd64
+
+archives:
+- replacements:
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-snapshot"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
