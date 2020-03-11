@@ -83,6 +83,7 @@ go get -u github.com/neilotoole/sqlitr
 ```
 
 ### go install
+Or, if you want to install from source:
 
 ```shell script
 $ git clone https://github.com/neilotoole/sqlitr.git
@@ -94,14 +95,16 @@ $ go install
 Install on macOS via [brew](https://brew.sh/)
 
 ```shell script
-$ brew tap neilotoole/sqlitr && brew install sqlitr
+$ brew tap neilotoole/sqlitr
+$ brew install sqlitr
 ```
 
 ### scoop
 Install on Windows via [scoop](https://brew.sh/)
 
 ```shell script
-TODO
+$ scoop bucket add sqlitr https://github.com/neilotoole/sqlitr
+$ scoop install sqlitr
 ```
 
 ### snap
