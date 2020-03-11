@@ -51,7 +51,7 @@ func main() {
 
 	err := cli(ctx, os.Stdout, os.Args)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, "sqlitr: error: "+err.Error())
 		os.Exit(1)
 	}
 }

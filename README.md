@@ -121,13 +121,12 @@ TODO
 Run directly from the published docker image:
 
 ```shell script
-docker run neilotoole/sqlitr:latest https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite 'SELECT * FROM actor'
+docker run neilotoole/sqlitr:latest /example.sqlite 'SELECT * FROM actor'
 ```
 
 ### RPM
 
 ### GitHub Release
-
 Download the appropriate file from GitHub [releases], and extract the binary from the archive.
 
 

@@ -14,6 +14,8 @@ WORKDIR /go/src/github.com/neiltoole/sqlitr
 RUN go install
 
 FROM golang:1.14.0-buster AS final
+COPY --from=sqlitr_base /go/bin/sqlitr /usr/local/bin/sqlitr
+# Copy the testdata/example.sqlite DB to the final image
+# to make testing/examples easy
 COPY --from=sqlitr_base /go/src/github.com/neiltoole/sqlitr/testdata/example.sqlite /example.sqlite
-COPY --from=sqlitr_base /go/bin/sqlitr /go/bin/sqlitr
-ENTRYPOINT ["/go/bin/sqlitr"]
+ENTRYPOINT ["/usr/local/bin/sqlitr"]
