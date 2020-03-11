@@ -10,10 +10,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"math/rand"
+	"mime"
+	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 
 	// Use pflag instead of stdlib flag to support flags
@@ -99,18 +106,34 @@ func cli(ctx context.Context, out io.Writer, osArgs []string) error {
 		return doCreate(ctx, cfg)
 	}
 
-	// cmdArgs[0] is sqlite db file path
+	// cmdArgs[0] is sqlite db file path (or http url)
 	// cmdArgs[1] is the SQL query
 	// Any additional args are arguments to the SQL query
-	cmdArgs := pflag.Args()
+	cmdArgs := flags.Args()
 	if len(cmdArgs) < 2 {
 		return errors.New("invalid args")
 	}
 
 	cfg.dbFile = cmdArgs[0]
-	_, err = os.Stat(cfg.dbFile)
-	if err != nil {
-		return err
+	if strings.HasPrefix(cfg.dbFile, "http://") || strings.HasPrefix(cfg.dbFile, "https://") {
+		// it's a remote file, let's grab it
+		destDir, err := ioutil.TempDir("", "sqlitr_*")
+		if err != nil {
+			return err
+		}
+		name, written, err := download(ctx, cfg.dbFile, destDir, "download.sqlite")
+		if err != nil {
+			return err
+		}
+		if written == 0 {
+			return fmt.Errorf("downloaded file appears to be empty: %s", name)
+		}
+		cfg.dbFile = name
+	} else {
+		_, err = os.Stat(cfg.dbFile)
+		if err != nil {
+			return err
+		}
 	}
 
 	query := strings.TrimSpace(cmdArgs[1])
@@ -131,13 +154,13 @@ func cli(ctx context.Context, out io.Writer, osArgs []string) error {
 func doQuery(ctx context.Context, cfg config, query string, queryArgs ...interface{}) error {
 	db, err := sql.Open("sqlite3", cfg.dbFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %w", cfg.dbFile, err)
 	}
 	defer db.Close()
 
 	rows, err := db.QueryContext(ctx, query, queryArgs...)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %w", cfg.dbFile, err)
 	}
 
 	colNames, err := rows.Columns()
@@ -239,6 +262,92 @@ func doCreate(ctx context.Context, cfg config) error {
 
 	fmt.Fprintln(cfg.out, "Created SQLite DB:", cfg.dbFile)
 	return nil
+}
+
+// download downloads the contents of fileURL to file in destDir,
+// returning the absolute path of the downloaded file and
+// the number of bytes written to it.
+//
+// This function will attempt to determine a filename from
+// the fileURL's response content-disposition or from fileURL's path,
+// otherwise defaultFilename is used if non-empty, or else
+// a random name.
+func download(ctx context.Context, fileURL, destDir, defaultFilename string) (name string, written int64, err error) {
+	fi, err := os.Stat(destDir)
+	if err != nil {
+		return "", 0, err
+	}
+
+	if !fi.IsDir() {
+		return "", 0, fmt.Errorf("not a dir: %s", destDir)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", fileURL, nil)
+	if err != nil {
+		return "", 0, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", 0, err
+	}
+	defer resp.Body.Close()
+
+	// Try to get the filename from the content-disposition
+	var workingName string
+	contentDisposition := resp.Header.Get("Content-Disposition")
+	if contentDisposition != "" {
+		if _, params, err := mime.ParseMediaType(contentDisposition); err == nil {
+			if v, ok := params["filename"]; ok && v != "" {
+				workingName = v
+			}
+		}
+	}
+
+	// didn't get it from content-disposition, try using the url path
+	if workingName == "" {
+		u, err := url.ParseRequestURI(fileURL)
+		if err != nil {
+			return "", 0, err
+		}
+		base := path.Base(u.Path)
+		if base != "." && base != "/" { // could happen if the url is the root
+			workingName = base
+		}
+	}
+
+	if workingName == "" {
+		// Still couldn't get the filename, using default
+		if defaultFilename == "" {
+			workingName = strconv.Itoa(rand.Int())
+		} else {
+			workingName = defaultFilename
+		}
+	}
+
+	absDestFilePath, err := filepath.Abs(filepath.Join(destDir, workingName))
+	if err != nil {
+		return "", 0, err
+	}
+	f, err := os.Create(absDestFilePath)
+	if err != nil {
+		return "", 0, err
+	}
+
+	written, err = io.Copy(f, resp.Body)
+	if err != nil {
+		_ = f.Close()
+		_ = os.Remove(absDestFilePath)
+		return "", 0, err
+	}
+
+	err = f.Close()
+	if err != nil {
+		_ = os.Remove(absDestFilePath)
+		return "", 0, err
+	}
+
+	return absDestFilePath, written, nil
 }
 
 const msgHelp = `sqlitr is a trivial demonstration query tool for SQLite.
