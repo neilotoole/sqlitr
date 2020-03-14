@@ -67,21 +67,13 @@ changelog:
   skip: true
 
 
-release:
-  github:
-    owner: neilotoole
-    name: sqlitr
-  draft: false
-  prerelease: auto
-  ids:
-    - archive_macos
-    - archive_linux
-    - archive_windows
+
 
 nfpms:
   -
-#    id: "hugo"
+    id: "nfpms"
     builds: ['build_linux']
+    release: 1
     formats:
       - deb
       - rpm
@@ -104,6 +96,18 @@ nfpms:
 #      freebsd: FreeBSD
 #      dragonfly: DragonFlyBSD
 
+
+release:
+  github:
+    owner: neilotoole
+    name: sqlitr
+  draft: false
+  prerelease: auto
+  ids:
+    - archive_macos
+    - archive_linux
+    - archive_windows
+#    - nfpms
 
 brews:
   -
