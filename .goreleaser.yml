@@ -130,8 +130,8 @@ brews:
   -
     homepage: "https://github.com/neilotoole/sqlitr"
     description: "sqlitr is a trivial Go/CGo SQLite CLI"
-    ids:
-      - archive_macos
+#    ids:
+#      - archive_macos
     github:
       owner: neilotoole
       name: homebrew-sqlitr
