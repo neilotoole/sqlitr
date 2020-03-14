@@ -38,7 +38,31 @@ builds:
       - amd64
 
 archives:
-- replacements:
+  - id: archive_macos
+    builds:
+      - build_macos
+    files:
+      - README.md
+      - LICENSE
+
+  - id: archive_linux
+    builds:
+      - build_linux
+    files:
+      - README.md
+      - LICENSE
+
+  - id: archive_windows
+    builds:
+      - build_windows
+    format: zip
+    files:
+      - README.md
+      - LICENSE
+#    format_overrides:
+#      - goos: windows
+#        format: zip
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -53,14 +77,22 @@ release:
     name: sqlitr
   draft: false
   prerelease: auto
+  ids:
+    - archive_macos
+    - archive_linux
+    - archive_windows
+
 
 brews:
   -
     homepage: "https://github.com/neilotoole/sqlitr"
     description: "sqlitr is a trivial Go/CGo SQLite CLI"
+    ids:
+      - archive_macos
     github:
       owner: neilotoole
       name: homebrew-sqlitr
+
 
 scoop:
   bucket:
