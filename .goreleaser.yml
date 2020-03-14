@@ -36,27 +36,34 @@ builds:
       - amd64
 
 archives:
-  - id: archive_macos
-    builds:
-      - build_macos
-    files:
-      - README.md
-      - LICENSE
-
-  - id: archive_linux
-    builds:
-      - build_linux
-    files:
-      - README.md
-      - LICENSE
-
-  - id: archive_windows
-    builds:
-      - build_windows
-    format: zip
-    files:
-      - README.md
-      - LICENSE
+  -
+    id: "hugo"
+    builds: ['build_macos', 'build_linux', 'build_windows']
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+#  - id: archive_macos
+#    builds:
+#      - build_macos
+#    files:
+#      - README.md
+#      - LICENSE
+#
+#  - id: archive_linux
+#    builds:
+#      - build_linux
+#    files:
+#      - README.md
+#      - LICENSE
+#
+#  - id: archive_windows
+#    builds:
+#      - build_windows
+#    format: zip
+#    files:
+#      - README.md
+#      - LICENSE
 
 
 checksum:
@@ -66,14 +73,24 @@ snapshot:
 changelog:
   skip: true
 
-
+release:
+  github:
+    owner: neilotoole
+    name: sqlitr
+  draft: false
+  prerelease: auto
+#  ids:
+#    - archive_macos
+#    - archive_linux
+#    - archive_windows
+#    - nfpms
 
 
 nfpms:
   -
     id: "nfpms"
     builds: ['build_linux']
-    release: 1
+#    release: 1
     formats:
       - deb
       - rpm
@@ -97,16 +114,16 @@ nfpms:
 #      dragonfly: DragonFlyBSD
 
 
-release:
-  github:
-    owner: neilotoole
-    name: sqlitr
-  draft: false
-  prerelease: auto
-  ids:
-    - archive_macos
-    - archive_linux
-    - archive_windows
+#release:
+#  github:
+#    owner: neilotoole
+#    name: sqlitr
+#  draft: false
+#  prerelease: auto
+#  ids:
+#    - archive_macos
+#    - archive_linux
+#    - archive_windows
 #    - nfpms
 
 brews:
