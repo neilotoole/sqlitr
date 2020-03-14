@@ -1,12 +1,12 @@
 {
-    "version": "0.1.9",
+    "version": "0.1.10",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/neilotoole/sqlitr/releases/download/v0.1.9/sqlitr_0.1.9_windows_amd64.zip",
+            "url": "https://github.com/neilotoole/sqlitr/releases/download/v0.1.10/sqlitr_0.1.10_windows_amd64.zip",
             "bin": [
                 "sqlitr.exe"
             ],
-            "hash": "c5ef931351eabe98327835759bb09b454da9f994b43f5dc5922974925805fa8e"
+            "hash": "fe685b8ad064fcd0449759f288e2ad6baa37e2471136696fa3c4c0ec9af5002b"
         }
     },
     "homepage": "https://github.com/neilotoole/sqlitr",
