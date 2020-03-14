@@ -6,6 +6,7 @@
 
 FROM scratch
 COPY sqlitr /
+ADD ./testdata/example.sqlite /example.sqlite
 ENTRYPOINT ["/sqlitr"]
 
 #FROM golang:1.14.0-buster AS builder
