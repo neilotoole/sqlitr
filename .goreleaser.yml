@@ -32,6 +32,7 @@ builds:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser -linkmode external -extldflags -static
     flags:
       - -tags=netgo
+      - -v
 
   - id: build_windows
     env:
@@ -45,9 +46,11 @@ builds:
 
 archives:
   -
-#    id: "hugo"
     builds: ['build_macos', 'build_linux', 'build_windows']
     format: tar.gz
+    files:
+      - README.md
+      - LICENSE
     format_overrides:
       - goos: windows
         format: zip
@@ -87,18 +90,11 @@ release:
     name: sqlitr
   draft: false
   prerelease: auto
-#  ids:
-#    - archive_macos
-#    - archive_linux
-#    - archive_windows
-#    - nfpms
 
 
 nfpms:
   -
-    id: "nfpms"
     builds: ['build_linux']
-#    release: 1
     formats:
       - deb
       - rpm
@@ -107,39 +103,12 @@ nfpms:
     maintainer: "neilotoole@apache.org"
     description: "sqlitr is a trivial Go/CGo SQLite CLI"
     license: "MIT"
-#    name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
-#    replacements:
-#      amd64: 64bit
-#      386: 32bit
-#      arm: ARM
-#      arm64: ARM64
-#      darwin: macOS
-#      linux: Linux
-#      windows: Windows
-#      openbsd: OpenBSD
-#      netbsd: NetBSD
-#      freebsd: FreeBSD
-#      dragonfly: DragonFlyBSD
 
-
-#release:
-#  github:
-#    owner: neilotoole
-#    name: sqlitr
-#  draft: false
-#  prerelease: auto
-#  ids:
-#    - archive_macos
-#    - archive_linux
-#    - archive_windows
-#    - nfpms
 
 brews:
   -
     homepage: "https://github.com/neilotoole/sqlitr"
     description: "sqlitr is a trivial Go/CGo SQLite CLI"
-#    ids:
-#      - archive_macos
     github:
       owner: neilotoole
       name: homebrew-sqlitr
@@ -193,6 +162,7 @@ dockers:
       - build_linux
     image_templates:
       - "neilotoole/sqlitr:{{ .Version }}"
-      # - "neilotoole/sqlitr:latest"
-    build_flag_templates:
-      - "--build-arg=BRANCH={{ .Tag }}"
+    extra_files:
+      - README.md
+      - LICENSE
+      - testdata/example.sqlite
