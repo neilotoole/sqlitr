@@ -37,7 +37,7 @@ builds:
 
 archives:
   -
-    id: "hugo"
+#    id: "hugo"
     builds: ['build_macos', 'build_linux', 'build_windows']
     format: tar.gz
     format_overrides:
@@ -185,4 +185,6 @@ dockers:
       - build_linux
     image_templates:
       - "neilotoole/sqlitr:{{ .Version }}"
-#      - "neilotoole/sqlitr:latest"
+      # - "neilotoole/sqlitr:latest"
+    build_flag_templates:
+      - "--build-arg=BRANCH={{ .Tag }}"
