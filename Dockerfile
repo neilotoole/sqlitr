@@ -19,7 +19,3 @@ COPY --from=sqlitr_base /go/bin/sqlitr /usr/local/bin/sqlitr
 # to make testing/examples easy
 COPY --from=sqlitr_base /go/src/github.com/neiltoole/sqlitr/testdata/example.sqlite /example.sqlite
 ENTRYPOINT ["/usr/local/bin/sqlitr"]
-
-#FROM scratch
-#COPY sqlitr /
-##ENTRYPOINT ["/sqlitr"]

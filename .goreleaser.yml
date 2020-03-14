@@ -78,6 +78,32 @@ release:
     - archive_linux
     - archive_windows
 
+nfpms:
+  -
+#    id: "hugo"
+    builds: ['build_linux']
+    formats:
+      - deb
+      - rpm
+    vendor: "neilotoole"
+    homepage: "https://github.com/neilotoole/sqltir"
+    maintainer: "neilotoole@apache.org"
+    description: "sqlitr is a trivial Go/CGo SQLite CLI"
+    license: "MIT"
+#    name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+#    replacements:
+#      amd64: 64bit
+#      386: 32bit
+#      arm: ARM
+#      arm64: ARM64
+#      darwin: macOS
+#      linux: Linux
+#      windows: Windows
+#      openbsd: OpenBSD
+#      netbsd: NetBSD
+#      freebsd: FreeBSD
+#      dragonfly: DragonFlyBSD
+
 
 brews:
   -
