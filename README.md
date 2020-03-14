@@ -115,22 +115,26 @@ TODO
 ```
 
 ### Docker
-Run directly from the published docker image:
+Run `sqlitr` directly from the published docker image:
 
 ```shell script
-docker run neilotoole/sqlitr:latest /example.sqlite 'SELECT * FROM actor'
+$ docker run neilotoole/sqlitr:latest /example.sqlite 'SELECT * FROM actor'
+```
+^ Note that `/example.sqlite` is included in the image. You could also use a remote DB file:
+
+```shell script
+$ docker run neilotoole/sqlitr:latest https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite 'SELECT * FROM actor'
 ```
 
 ### RPM
 
 ### GitHub Release
-Download the appropriate file from GitHub [releases], and extract the binary from the archive.
+Download the appropriate file from GitHub [releases](https://github.com/neilotoole/sqlitr/releases), and extract the binary from the archive.
 
 
 ## Acknowledgements
-The `testdata/example.sqlite` SQLite database is a tiny
+
+- The `testdata/example.sqlite` SQLite database is a tiny
 stripped-down version of the [Sakila DB](https://dev.mysql.com/doc/sakila/en/)
 with just `10` rows in only one table (`actor`).
-
-`sqlitr` employs [mattn/sqlite3](https://github.com/mattn/sqlite3) to demonstrate
-CGo usage.
+- `sqlitr` employs [mattn/sqlite3](https://github.com/mattn/sqlite3) to demonstrate CGo usage.

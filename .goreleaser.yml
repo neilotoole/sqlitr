@@ -69,4 +69,49 @@ scoop:
   homepage: "https://github.com/neilotoole/sqlitr"
   description: "sqlitr is a trivial Go/CGo SQLite CLI"
 
+snapcrafts:
+  # For this to work, either snapcraft needs to be installed.
+  # - On macOS, "brew install snapcraft", then "snapcraft login".
+  # - Or use neilotoole/xcgo: https://github.com/neilotoole/xcgo/wiki/Snap
+
+  -
+    # ID of the snapcraft config, must be unique.
+    # Defaults to "default".
+#    id: neilotoole-sq
+
+    builds:
+      - build_linux
+    # The name of the snap. This is optional.
+    # Default is project name.
+    name: sqlitr
+
+
+    #    name_template: '`{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}`'
+    #    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+#    name_template: "neilotoole-sq-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+#    #    name_template: "neilotoole-sq"
+    summary: "Trivial SQLite query tool to demonstrate neilotoole/xcgo"
+    description: |
+      sqlitr is a trivial query tool for SQLite. It was created as a demonstration for neilotoole/xcgo, which is a Go cross-compiling docker builder image.
+
+    # A guardrail to prevent you from releasing a snap to all your users before
+    # it is ready.
+    # `devel` will let you release only to the `edge` and `beta` channels in the
+    # store. `stable` will let you release also to the `candidate` and `stable`
+    # channels. More info about channels here:
+    # https://snapcraft.io/docs/reference/channels
+    grade: devel
+
+    # Snaps can be setup to follow three different confinement policies:
+    # `strict`, `devmode` and `classic`. A strict confinement where the snap
+    # can only read and write in its own namespace is recommended. Extra
+    # permissions for strict snaps can be declared as `plugs` for the app, which
+    # are explained later. More info about confinement here:
+    # https://snapcraft.io/docs/reference/confinement
+    confinement: devmode
+    publish: true
+    license: MIT
+    base: core18
+
+
 
