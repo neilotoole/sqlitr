@@ -111,7 +111,7 @@ $ scoop install sqlitr
 Install on Linux via [snap](https://snapcraft.io/docs/getting-started)
 
 ```shell script
-TODO
+snap install --edge --devmode sqlitr 
 ```
 
 ### Docker
