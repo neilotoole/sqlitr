@@ -7,4 +7,4 @@ docker run --rm --privileged \
 -e "DOCKER_USERNAME=$DOCKER_USERNAME" -e "DOCKER_PASSWORD=$DOCKER_PASSWORD" -e "DOCKER_REGISTRY=$DOCKER_REGISTRY" \
 -v "${HOME}/.snapcraft.login":/.snapcraft.login \
 -w /go/src/github.com/neilotoole/sqlitr \
-neilotoole/xcgo:latest goreleaser --rm-dist
+neilotoole/xcgo:latest goreleaser release --rm-dist
