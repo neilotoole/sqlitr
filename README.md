@@ -86,8 +86,7 @@ go get -u github.com/neilotoole/sqlitr
 Or, if you want to install from source:
 
 ```shell script
-$ git clone https://github.com/neilotoole/sqlitr.git
-$ cd sqlitr
+$ git clone https://github.com/neilotoole/sqlitr.git && cd sqlitr
 $ go install
 ```
 

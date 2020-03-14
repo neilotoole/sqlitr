@@ -1,7 +1,5 @@
 # goreleaser.yaml file builds the project for macOS, Linux, and Windows
-# on amd64.
-#
-# See http://goreleaser.com
+# on amd64. See http://goreleaser.com
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
@@ -59,9 +57,7 @@ archives:
     files:
       - README.md
       - LICENSE
-#    format_overrides:
-#      - goos: windows
-#        format: zip
+
 
 checksum:
   name_template: 'checksums.txt'
@@ -92,8 +88,12 @@ brews:
     github:
       owner: neilotoole
       name: homebrew-sqlitr
+
+    install: |
+      bin.install "sqlitr"
     test: |
       system "#{bin}/sqlitr --version"
+
 
 scoop:
   bucket:
@@ -103,60 +103,29 @@ scoop:
   description: "sqlitr is a trivial Go/CGo SQLite CLI"
 
 snapcrafts:
-  # For this to work, either snapcraft needs to be installed.
+  # For this to work, login to snapcraft.
   # - On macOS, "brew install snapcraft", then "snapcraft login".
-  # - Or use neilotoole/xcgo: https://github.com/neilotoole/xcgo/wiki/Snapcraft
-
+  # - Or just use neilotoole/xcgo: https://github.com/neilotoole/xcgo/wiki/Snapcraft
   -
-    # ID of the snapcraft config, must be unique.
-    # Defaults to "default".
-#    id: neilotoole-sq
-
     builds:
       - build_linux
-    # The name of the snap. This is optional.
-    # Default is project name.
     name: sqlitr
-
-
-    #    name_template: '`{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}`'
-    #    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-#    name_template: "neilotoole-sq-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
-#    #    name_template: "neilotoole-sq"
     summary: "Trivial SQLite query tool to demonstrate neilotoole/xcgo"
     description: |
       sqlitr is a trivial query tool for SQLite. It was created as a demonstration for neilotoole/xcgo, which is a Go cross-compiling docker builder image.
-
-    # A guardrail to prevent you from releasing a snap to all your users before
-    # it is ready.
-    # `devel` will let you release only to the `edge` and `beta` channels in the
-    # store. `stable` will let you release also to the `candidate` and `stable`
-    # channels. More info about channels here:
-    # https://snapcraft.io/docs/reference/channels
     grade: stable
-
-    # Snaps can be setup to follow three different confinement policies:
-    # `strict`, `devmode` and `classic`. A strict confinement where the snap
-    # can only read and write in its own namespace is recommended. Extra
-    # permissions for strict snaps can be declared as `plugs` for the app, which
-    # are explained later. More info about confinement here:
-    # https://snapcraft.io/docs/reference/confinement
     confinement: strict
     publish: true
     license: MIT
     base: core18
-
     apps:
-
-      # The name of the app must be the same name as the binary built or the snapcraft name.
-      #      neilotoole-sq:
       sqlitr:
-
-      # If your app requires extra permissions to work outside of its default
-      # confined space, declare them here.
-      # You can read the documentation about the available plugs and the
-      # things they allow:
-      # https://snapcraft.io/docs/reference/interfaces.
+        # If your app requires extra permissions to work outside of its default
+        # confined space, declare them here.
+        # You can read the documentation about the available plugs and the
+        # things they allow:
+        # https://snapcraft.io/docs/reference/interfaces.
+        #
+        # Declare "home" and "network" plugs to grant access to
+        # the user home dir, and the network
         plugs: ["home", "network"]
-
-
