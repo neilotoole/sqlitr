@@ -108,11 +108,20 @@ $ scoop install sqlitr
 ```
 
 ### snap
-Install on Linux via [snap](https://snapcraft.io/docs/getting-started)
+Install on Linux via [snap](https://snapcraft.io/docs/getting-started).
 
 ```shell script
-snap install --edge --devmode sqlitr 
+$ snap install sqlitr --devmode
 ```
+
+^ Note the `--devmode` flag. This is required so that `snap` grants access
+to resources ([interfaces](https://snapcraft.io/docs/interface-management)) such as the user home dir or the network (this mechanism is known as [confinement](https://snapcraft.io/docs/snap-confinement). If only accessing
+db files in, say, `/tmp`, then that flag can be omitted. You could also manually grant access to those interfaces after installation:
+
+```shell script
+
+```
+
 
 ### Docker
 Run `sqlitr` directly from the published docker image:
