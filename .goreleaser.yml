@@ -129,3 +129,13 @@ snapcrafts:
         # Declare "home" and "network" plugs to grant access to
         # the user home dir, and the network
         plugs: ["home", "network"]
+
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    builds:
+      - build_linux
+    image_templates:
+      - "neilotoole/sqlitr:{{ .Version }}"
+#      - "neilotoole/sqlitr:latest"
