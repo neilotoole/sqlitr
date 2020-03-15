@@ -143,7 +143,6 @@ func Test_download(t *testing.T) {
 
 	gotFile, written, err := download(ctx, wantURL, destDir, "")
 	require.NoError(t, err)
-	t.Logf("downloaded %s  -->  %s", wantURL, gotFile)
 	require.True(t, written > 0)
 	fi, err := os.Stat(gotFile)
 	require.NoError(t, err)
