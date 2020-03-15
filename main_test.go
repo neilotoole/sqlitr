@@ -22,6 +22,7 @@ const (
 	expectRowCount = 10
 
 	flagNoHeaderTrue = "--no-header=true"
+	dbRemoteURL      = "https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite"
 )
 
 func Test_doQuery_doExec(t *testing.T) {
@@ -72,10 +73,9 @@ func Test_cli_query(t *testing.T) {
 }
 
 func Test_cli_query_download(t *testing.T) {
-	const dbURL = "https://github.com/neilotoole/sqlitr/raw/dev/testdata/example.sqlite"
 
 	ctx, buf := context.Background(), &bytes.Buffer{}
-	osArgs := []string{t.Name(), flagNoHeaderTrue, dbURL, "SELECT * FROM actor"}
+	osArgs := []string{t.Name(), flagNoHeaderTrue, dbRemoteURL, "SELECT * FROM actor"}
 
 	err := cli(ctx, buf, osArgs)
 	require.NoError(t, err)
@@ -135,14 +135,13 @@ func Test_cli_version(t *testing.T) {
 }
 
 func Test_download(t *testing.T) {
-	const wantURL = "https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite"
-
 	ctx := context.Background()
 	destDir, err := ioutil.TempDir("", t.Name())
 	require.NoError(t, err)
 
-	gotFile, written, err := download(ctx, wantURL, destDir, "")
+	gotFile, written, err := download(ctx, dbRemoteURL, destDir, "")
 	require.NoError(t, err)
+	t.Logf("downloaded %s  -->  %s", dbRemoteURL, gotFile)
 	require.True(t, written > 0)
 	fi, err := os.Stat(gotFile)
 	require.NoError(t, err)
