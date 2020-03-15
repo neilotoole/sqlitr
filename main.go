@@ -35,6 +35,7 @@ var (
 	version = "dev"
 	commit  = "none"
 	date    = "unknown"
+	builtBy = ""
 )
 
 func main() {
@@ -350,7 +351,7 @@ func download(ctx context.Context, fileURL, destDir, defaultFilename string) (na
 	return absDestFilePath, written, nil
 }
 
-const msgHelp = `sqlitr is a trivial demonstration query tool for SQLite.
+const msgHelp = `sqlitr is a trivial query tool for SQLite.
 
 Usage: sqlitr [FLAGS] path/to/db.sqlite query [QUERY_ARGS]
 

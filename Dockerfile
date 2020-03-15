@@ -1,21 +1,19 @@
-# This Dockerfile executes https://github.com/neilotoole/sqlitr.
+# This Dockerfile builds an image whose entrypoint
+# executes https://github.com/neilotoole/sqlitr.
+# A sample database is included at /example.sqlite
 #
 # Example:
 # $ docker run neilotoole/sqlitr:latest https://github.com/neilotoole/sqlitr/raw/master/testdata/example.sqlite 'SELECT * FROM actor'
 # $ docker run neilotoole/sqlitr:latest /example.sqlite 'SELECT * FROM actor'
-
-FROM golang:1.14.0-buster AS sqlitr_base
+FROM scratch
 LABEL maintainer="neilotoole@apache.org"
-WORKDIR /go/src/github.com/neiltoole
-ENV GO111MODULE=on
-ENV CGO_ENABLED=1
-RUN git clone https://github.com/neilotoole/sqlitr.git
-WORKDIR /go/src/github.com/neiltoole/sqlitr
-RUN go install
 
-FROM golang:1.14.0-buster AS final
-COPY --from=sqlitr_base /go/bin/sqlitr /usr/local/bin/sqlitr
-# Copy the testdata/example.sqlite DB to the final image
-# to make testing/examples easy
-COPY --from=sqlitr_base /go/src/github.com/neiltoole/sqlitr/testdata/example.sqlite /example.sqlite
+# This Dockerfile is intended to be built by goreleaser, which
+# sets up a temporary folder that can be copied from.
+COPY sqlitr /usr/local/bin/
+COPY LICENSE /
+COPY README.md /
+COPY testdata/example.sqlite /example.sqlite
+
+WORKDIR /
 ENTRYPOINT ["/usr/local/bin/sqlitr"]

@@ -1,7 +1,5 @@
 # goreleaser.yaml file builds the project for macOS, Linux, and Windows
-# on amd64.
-#
-# See http://goreleaser.com
+# on amd64. See http://goreleaser.com
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
@@ -26,6 +24,13 @@ builds:
       - linux
     goarch:
       - amd64
+    ldflags:
+      # Note the additional ldflags (-linkmode etc), and the "-tags=netgo" in
+      # flags below. This is to build a static binary.
+      - -linkmode external -extldflags -static -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+    flags:
+      - -tags=netgo
+      - -v
 
   - id: build_windows
     env:
@@ -38,7 +43,17 @@ builds:
       - amd64
 
 archives:
-- replacements:
+  -
+    builds: ['build_macos', 'build_linux', 'build_windows']
+    format: tar.gz
+    files:
+      - README.md
+      - LICENSE
+    format_overrides:
+      - goos: windows
+        format: zip
+
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -54,6 +69,20 @@ release:
   draft: false
   prerelease: auto
 
+
+nfpms:
+  -
+    builds: ['build_linux']
+    formats:
+      - deb
+      - rpm
+    vendor: "neilotoole"
+    homepage: "https://github.com/neilotoole/sqltir"
+    maintainer: "neilotoole@apache.org"
+    description: "sqlitr is a trivial Go/CGo SQLite CLI"
+    license: "MIT"
+
+
 brews:
   -
     homepage: "https://github.com/neilotoole/sqlitr"
@@ -62,31 +91,56 @@ brews:
       owner: neilotoole
       name: homebrew-sqlitr
 
+    install: |
+      bin.install "sqlitr"
+    test: |
+      system "#{bin}/sqlitr --version"
+
+
 scoop:
-  # scoop is a package installer for Windows, like brew for macOS.
-  # For background, see https://github.com/lukesampson/scoop/wiki/Buckets
   bucket:
     owner: neilotoole
     name: sqlitr
   homepage: "https://github.com/neilotoole/sqlitr"
   description: "sqlitr is a trivial Go/CGo SQLite CLI"
 
-#    commit_author:
-#      name: neilotoole
-#      email: neilotoole@apache.org
-#
-##    folder: Formula
-##
-##    test: |
-##      system "#{bin}/sq version"
-##
-##    install: |
-##      bin.install "sq"
-##    # Setting this will prevent goreleaser to actually try to commit the updated
-##    # formula - instead, the formula file will be stored on the dist folder only,
-##    # leaving the responsibility of publishing it to the user.
-##    # If set to auto, the release will not be uploaded to the homebrew tap
-##    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
-##    # Default is false.
-##    skip_upload: false
+snapcrafts:
+  # For this to work, login to snapcraft.
+  # - On macOS, "brew install snapcraft", then "snapcraft login".
+  # - Or just use neilotoole/xcgo: https://github.com/neilotoole/xcgo/wiki/Snapcraft
+  -
+    builds:
+      - build_linux
+    name: sqlitr
+    summary: "Trivial SQLite query tool to demonstrate neilotoole/xcgo"
+    description: |
+      sqlitr is a trivial query tool for SQLite. It was created as a demonstration for neilotoole/xcgo, which is a Go cross-compiling docker builder image.
+    grade: stable
+    confinement: strict
+    publish: true
+    license: MIT
+    base: core18
+    apps:
+      sqlitr:
+        # If your app requires extra permissions to work outside of its default
+        # confined space, declare them here.
+        # You can read the documentation about the available plugs and the
+        # things they allow:
+        # https://snapcraft.io/docs/reference/interfaces.
+        #
+        # Declare "home" and "network" plugs to grant access to
+        # the user home dir, and the network
+        plugs: ["home", "network"]
 
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    builds:
+      - build_linux
+    image_templates:
+      - "neilotoole/sqlitr:{{ .Version }}"
+    extra_files:
+      - README.md
+      - LICENSE
+      - testdata/example.sqlite
