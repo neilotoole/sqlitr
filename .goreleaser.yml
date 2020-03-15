@@ -1,5 +1,4 @@
-# goreleaser.yaml file builds the project for macOS, Linux, and Windows
-# on amd64. See http://goreleaser.com
+project_name: sqlitr
 env:
   - GO111MODULE=on
   - CGO_ENABLED=1
