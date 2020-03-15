@@ -1,7 +1,7 @@
 # neilotoole/sqlitr
 `sqlitr` is a trivial query tool for SQLite written in Go. It was created as a
 example project for [neilotoole/xcgo](https://github.com/neilotoole/xcgo),
-which is a Go cross-compiling docker builder image. `sqlitr` invokes
+which is a Go/Golang cross-compiling docker builder image. `sqlitr` invokes
 the SQLite C library via CGo: building and distributing binaries for
 multiple platforms with CGo is a challenge. The `neilotoole/xcgo`
 image makes life easier for the common cases.
