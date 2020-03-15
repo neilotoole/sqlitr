@@ -164,5 +164,5 @@ $ docker run neilotoole/sqlitr:latest https://github.com/neilotoole/sqlitr/raw/m
 - `sqlitr` was created to demonstrate [neilotoole/xcgo](https://github.com/neilotoole/xcgo): see that [README](https://github.com/neilotoole/xcgo/blob/master/README.md) for upstream acknowledgements.
 - `testdata/example.sqlite` database is a tiny
 stripped-down version of the [Sakila](https://dev.mysql.com/doc/sakila/en/) database.
-- `sqlitr` employs [mattn/sqlite3](https://github.com/mattn/sqlite3) to demonstrate CGo usage.
+- `sqlitr` employs [mattn/go-sqlite3](https://github.com/mattn/go-sqlite3) to demonstrate CGo usage.
 - And of course, [SQLite](https://www.sqlite.org/) itself.
